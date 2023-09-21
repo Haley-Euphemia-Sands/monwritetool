@@ -10,7 +10,19 @@
 #define TB 1073741824
 
 
+// Exit Codes:
 
+#define ERR_HELP exit(1) // Exit after Help - Non-Failure State
+#define ERR_FDIN exit(2) // File Descriptor is NULL - Failure State
+#define ERR_ARGX exit(3) // Expected More than 1 Argument but got <1 - Failure State
+#define ERR_ARGI exit(4) // Invalid Argument - Failure State
+
+
+
+void help() {
+	printf("Takes 3 arguments by default for the 3 letter drive identifier, will fail if not ext4\nHelp :  --help or -h\n");
+	ERR_HELP;	
+}
 
 int prettify_value(long long int value_in_kb, char drive_dir[7]) {
 	fprintf(stderr, "Input: value_in_kb = %lli, drive_dir[7] = %s\n", value_in_kb, drive_dir);
@@ -34,8 +46,49 @@ int prettify_value(long long int value_in_kb, char drive_dir[7]) {
 	return 0;
 }
 
-void main() {
-
+void main(int argu_num, char** argument_contents) {
+	if (argu_num <1) {
+		fprintf(stderr, "Invalid Number of Arguments.\nExpecing at least 1 Additional Argument\n");
+		ERR_ARGX;
+	}
+	fprintf(stderr, "%s, %s, %s, %s\n", argument_contents[0], argument_contents[1], argument_contents[2], argument_contents[3]);
+	char arg1[40], arg2[40], arg3[40], driv1[7], driv2[7], driv3[7];
+	switch (argument_contents[1]) {
+		case "--help": 
+			help();
+			break;
+		case "-h":
+			help();
+			break;
+		default: 
+			sprintf(arg1, "/sys/fs/ext4/%s1/lifetime_write_kbytes", argument_content[1]);
+			sprintf(driv1, "/dev/%s", argument_content[1]);
+		}
+	switch (argument_contents[2]) {
+		case "--help": 
+			help();
+			break;
+		case "-h":
+			help();
+			break;
+		default: 
+			sprintf(arg2, "/sys/fs/ext4/%s1/lifetime_write_kbytes", argument_content[2]);
+			sprintf(driv2, "/dev/%s", argument_content[2]);
+		}
+	switch (argument_contents[3]) {
+		case "--help": 
+			help();
+			break;
+		case "-h":
+			help();
+			break;
+		default: 
+			sprintf(arg3, "/sys/fs/ext4/%s1/lifetime_write_kbytes", argument_content[3]);
+			sprintf(driv3, "/dev/%s", argument_content[3]);
+		}
+	
+	}
+	fprintf(stderr, "%s\n", argument_contents[count]);
 	/*-----------------------------------------------------------------------------------*/
 	/*-----------------Var Declarations -------------------------------------------------*/
 	/*-----------------------------------------------------------------------------------*/
@@ -51,26 +104,26 @@ void main() {
 	/*-----------------------------------------------------------------------------------*/
 	
 	FILE *fd_sdb_lifetime_writes, *fd_sdc_lifetime_writes, *fd_sdd_lifetime_writes;
-	fd_sdb_lifetime_writes = fopen("/sys/fs/ext4/sdb1/lifetime_write_kbytes", "r");
-	fd_sdc_lifetime_writes = fopen("/sys/fs/ext4/sdc1/lifetime_write_kbytes", "r");
-	fd_sdd_lifetime_writes = fopen("/sys/fs/ext4/sdd1/lifetime_write_kbytes", "r");
+	fd_sdb_lifetime_writes = fopen(arg1, "r");
+	fd_sdc_lifetime_writes = fopen(arg2, "r");
+	fd_sdd_lifetime_writes = fopen(arg3, "r");
 	
 	fprintf(stderr, "lli_sdb_lifetime_lifetime_writes = %lli, lli_sdc_lifetime_lifetime_writes = %lli, lli_sdd_lifetime_lifetime_writes = %lli\n", lli_sdb_lifetime_lifetime_writes, lli_sdc_lifetime_lifetime_writes, lli_sdd_lifetime_lifetime_writes);
 	fprintf(stderr, "sdb_size = %i, sdc_size = %i, sdd_size = %i\n", sdb_size, sdc_size, sdd_size);
 	fprintf(stderr, "File Descriptor Pointers: sdb = %i, sdc = %i, sdd = %i\n", fd_sdb_lifetime_writes, fd_sdc_lifetime_writes, fd_sdd_lifetime_writes);
 	
 	if (fd_sdb_lifetime_writes == NULL){
-		fprintf(stderr, "/sys/fs/ext4/sdb1/lifetime_write_kbytes Failed to Open!\n");
-		errorfd = 0;
+		fprintf(stderr, "%s Failed to Open!\n", arg1);
+		ERR_FDIN;
 		
 	}
 	if (fd_sdc_lifetime_writes == NULL){
-		fprintf(stderr, "/sys/fs/ext4/sdc1/lifetime_write_kbytes Failed to Open!\n");
-		errorfd = 0;
+		fprintf(stderr, "%s Failed to Open!\n", arg2);
+		ERR_FDIN;
 	}
 	if (fd_sdd_lifetime_writes == NULL){
-		fprintf(stderr, "/sys/fs/ext4/sdd1/lifetime_write_kbytes Failed to Open!\n");
-		errorfd = 0;	
+		fprintf(stderr, "%s Failed to Open!\n", arg3);
+		ERR_FDIN;
 	}
 	
 	
@@ -80,7 +133,7 @@ void main() {
 		/*-----------------Seeking and Reading from File Streams-----------------------------*/
 		/*-----------------------------------------------------------------------------------*/
 
-			
+				
 		// lifetime writes var file size determination for /dev/sdb1
 			
 		fseek(fd_sdb_lifetime_writes, 0, SEEK_END);
@@ -140,9 +193,9 @@ void main() {
 		/*-----------------------------------------------------------------------------------*/
 		// if (error !=1) {
 		printf("Monitor Lifetime Writes Tool\n--------------------------\n");
-		prettify_value(lli_sdb_lifetime_lifetime_writes, "/dev/sdb");
-		prettify_value(lli_sdc_lifetime_lifetime_writes, "/dev/sdc");
-		prettify_value(lli_sdd_lifetime_lifetime_writes, "/dev/sdd");
+		prettify_value(lli_sdb_lifetime_lifetime_writes, driv1);
+		prettify_value(lli_sdc_lifetime_lifetime_writes, driv2);
+		prettify_value(lli_sdd_lifetime_lifetime_writes, driv3);
 		printf("\n\n\n");
 		fprintf(stderr, "prettify_value function has been called 3 times\n");
 		// }
